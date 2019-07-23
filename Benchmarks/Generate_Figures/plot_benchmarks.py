@@ -10,19 +10,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+## Latex Font ##
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+
+
 ###read inputs
-#benchmark = sys.argv[1]
-#platform = sys.argv[2]
-#path_to_figures = sys.argv[3]
+benchmark = sys.argv[1]
+platform = sys.argv[2]
+path_to_figures = sys.argv[3]
 
 ### manual inputs (in script)
-benchmark = 'dmatdmatadd'
-platform = 'MachineLearning'
+#benchmark = 'dmatdmatmult'
+#platform = "HPX_1.3.0"
+#platform = 'MachineLearning'
 
 
 
 ############## importing benchmark ####################
-filename=platform + "/" + benchmark + ".txt"
+filename=platform + "/" + benchmark + ".dat"
 
 threads_count = [1, 2, 4, 8, 12, 16]
 
@@ -31,7 +38,7 @@ with open(filename,"r") as file:
     for line in file:
         lines.append(line.split("\n")[0])
         
-plt.figure(1, figsize=[9, 7])    
+plt.figure(2, figsize=[9, 7])    
     
 ###plot benchmarks
 legend = []
@@ -56,6 +63,8 @@ for threads in threads_count:
     #plot benchmarks
     plt.plot(benx, beny)
 
+
+
 plt.xscale("log")    
 plt.grid(True, which="both", ls = "-", alpha = 0.5)     
 plt.ylabel("Mflop/s")
@@ -65,4 +74,4 @@ if benchmark == "daxpy" or benchmark == "dvecdvecadd":
 else:
     plt.xlabel("Matrix Size")
     plt.legend(legend)
-#plt.savefig(path_to_figures + "/" + platform + "/" + platform + "_" + benchmark + ".pdf")
+plt.savefig(path_to_figures + "/" + platform + "/" + benchmark + ".pdf")
