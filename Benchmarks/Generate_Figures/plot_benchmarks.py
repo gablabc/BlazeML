@@ -17,14 +17,14 @@ rc('text', usetex=True)
 
 
 ###read inputs
-benchmark = sys.argv[1]
-platform = sys.argv[2]
-path_to_figures = sys.argv[3]
+#benchmark = sys.argv[1]
+#platform = sys.argv[2]
+#path_to_figures = sys.argv[3]
 
 ### manual inputs (in script)
-#benchmark = 'dmatdmatmult'
+benchmark = 'tdmattdmatmult'
 #platform = "HPX_1.3.0"
-#platform = 'MachineLearning'
+platform = 'MachineLearning'
 
 
 
@@ -38,7 +38,7 @@ with open(filename,"r") as file:
     for line in file:
         lines.append(line.split("\n")[0])
         
-plt.figure(2, figsize=[9, 7])    
+plt.figure(1, figsize=[9, 7])    
     
 ###plot benchmarks
 legend = []

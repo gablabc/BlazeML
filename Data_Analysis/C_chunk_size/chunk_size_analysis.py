@@ -11,12 +11,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm as cm
 
+## Latex Font ##
+from matplotlib import rc
+rc('font',**{'family':'serif', 'serif':['Palatino'], 'size':15})
+rc('text', usetex=True)
+
 #%%
 ############### importing training data #################
         
-benchmark = 'dmattdmatmult'
-ms = 750
-
+benchmark = 'dmatdmatmult'
+ms = 2500
 
 ### Reading data file ###
 filename =  "data_chunk/marvinCS" + str(benchmark) + str(ms) + ".dat"
@@ -37,8 +41,6 @@ Xdata = np.array(Xdata)
 Mflops = np.array(Mflops) 
 targets = targets.astype(int)
 
-#%%
-
 plt.figure(4, figsize=(8, 6))
 
 for i in range(Xdata.shape[0]):
@@ -46,7 +48,7 @@ for i in range(Xdata.shape[0]):
     
 plt.grid(True, which="both", ls = "-", alpha = 0.5)     
 plt.xscale('log')
-plt.xlabel('ms')
+plt.xlabel('cs')
 plt.ylabel('Mflops')
 plt.legend(["Nthr = " + str(int(Xdata[i, 0])) for i in range(Xdata.shape[0])])
 

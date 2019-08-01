@@ -18,17 +18,17 @@ rc('text', usetex=True)
 
  
 ###read inputs
-benchmark = sys.argv[1]
-threads = sys.argv[2]
-path_to_figures = sys.argv[3]
+#benchmark = sys.argv[1]
+#threads = sys.argv[2]
+#path_to_figures = sys.argv[3]
 
 
-#benchmark = 'dmatdmatadd'
-#threads = "8"
+benchmark = 'dmattdmatmult'
+threads = "14"
 
 
 legend = []
-for platform in ['HPX_1.3.0' , 'MachineLearning']:
+for platform in ['HPX_1.3.0' , 'MachineLearning', 'Random']:
     filename= platform + "/" + benchmark + ".dat"
     
     lines=[]
@@ -54,9 +54,8 @@ for platform in ['HPX_1.3.0' , 'MachineLearning']:
         if read_index>len(lines) - 1:
             break
     plt.plot(x, y)
-    
         
-plt.legend(["HPX 1.3.0", "MachineLearning"],framealpha = 1)
+plt.legend(["HPX 1.3.0", "MachineLearning", "Random"],framealpha = 1)
 plt.xscale("log")    
 plt.grid(True, which = "both", ls = "-", alpha = 0.5)     
 plt.ylabel("Mflop/s")
@@ -65,4 +64,4 @@ if benchmark == "daxpy" or benchmark == "dvecdvecadd":
 else:
     plt.xlabel("Matrix Size")
 #plt.title('Performance comparison on benchmark : ' + str(benchmark) + ' on ' + str(threads) + ' CPU''s')
-plt.savefig(path_to_figures + "/" + benchmark + "/" + benchmark + "_" + threads + "CPU.pdf")
+#plt.savefig(path_to_figures + "/" + benchmark + "/" + benchmark + "_" + threads + "CPU.pdf")
