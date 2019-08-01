@@ -2,7 +2,8 @@
 #define TREE_HEADER 
 #include <vector>
 
-inline int decisionTree(const std::vector<double>& featureVector) { 
+template <typename T>
+inline int decisionTree(const std::vector<T>& featureVector) { 
     if (featureVector[2] < 21842500.0) {
         if (featureVector[3] < 28.5) {
             if (featureVector[1] < 175.0) {

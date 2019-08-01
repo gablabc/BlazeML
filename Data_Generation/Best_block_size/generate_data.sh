@@ -47,6 +47,6 @@ do
 done
 
 # convert the format 
-./convertFile
+./FileConvert
 # remove temporary file
 rm temp_file.txt

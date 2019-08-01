@@ -3,8 +3,9 @@ blazemark_dir="/home/glaberge/opt/master/blazemark"
 
 benchmarks=('dmattdmatmult')
 threads=('4' '6' '8' '10' '12' '14' '16')
+
+# try a range of values for chunk size
 chunk_sizes=('1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '20' '30' '40' '50' '60' '70' '80' '90' '100' )
-#'200' '300' '400' '500' '600' '700' '800' '900' '1000')
 block_size_vec=('16')
 block_size_row=('64')
 block_size_col=('64')
@@ -40,5 +41,7 @@ do
     done
 done
 
-#./convertFile
-#rm temp_file.txt
+# change format of data
+./FileConvert
+# remove temporary file
+rm temp_file.txt
