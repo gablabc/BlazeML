@@ -5,8 +5,8 @@ The repository is structured as follow:
 
 1. Data Generation (contains the bash scripts that are run to generate data files)
 
-1. Data Analysis ( contains python scripts to analyze, vizualize the data generated, anf fit machine learning algorithms)
+1. Data Analysis ( contains python scripts to analyze and vizualize the data generated. Machine learning algorithms are also fit on the Training Set and Evaluated on the Test Set)
 
-1. Benchmarks ( contains python scripts to plot performance graphs for different benchmarks)
+1. Benchmarks ( contains python scripts to plot performance graphs for different benchmarks. This allows to compare the old HPX backend and the Machine Learning backend)
 
-1. Models ( contains the header files that represent the classification trees fitted)
+1. Models ( contains the header files that represent the classification trees fitted )
