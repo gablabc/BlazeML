@@ -41,7 +41,7 @@ Xdata = np.array(Xdata)
 Mflops = np.array(Mflops) 
 targets = targets.astype(int)
 
-plt.figure(4, figsize=(8, 6))
+plt.figure(1, figsize=(8, 6))
 
 for i in range(Xdata.shape[0]):
     plt.plot(targets, Mflops[i, :])

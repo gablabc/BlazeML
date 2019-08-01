@@ -10,12 +10,14 @@ Created on Thu Jun 27 15:11:05 2019
 import numpy as np
 import math
 
+# Generate a array of k subsets of Xdata and Mflops
 def cluster_maker(Xdata, Mflops, k):
     delta = int(math.floor(Xdata.shape[0] / k))
     cluster = [[Xdata[i*delta:(i + 1) * delta + int(i==(k - 1)) * Xdata.shape[0],: ], \
                       Mflops[i*delta:(i + 1) * delta+int(i==(k - 1)) * Xdata.shape[0], :]] for i in range(k)]
     return cluster
     
+# Merges all subsets except one.
 def merge(cluster, index):
     X = cluster[int(index == 0)][0]
     Mf = cluster[int(index == 0)][1]
@@ -29,6 +31,7 @@ def merge(cluster, index):
     return X, Mf
 
 
+# Compute the MSOP error and prediction time via cross validation
 def getCrossValidationError(blackBoxModel, Xdata, Mflops, targets, k,\
                             otherModels = False, printRes = True):
     
@@ -37,29 +40,30 @@ def getCrossValidationError(blackBoxModel, Xdata, Mflops, targets, k,\
     overheads = []
     cluster = cluster_maker(Xdata, Mflops, k)
     
-    #loop over all fold but one
+    #loop over all folds
     for i in range(k):
         accuracy.append([])
         relPerf.append([])
         overheads.append([])
         
         
-        # Train on K - 1 sets
+        # Train on k-1 sets
         Xfold, Mfold = merge(cluster, i)
         blackBoxModel.train(Xfold, Mfold, targets, printRes = printRes)
         
-        # Evaluate on 1 set
+        # Evaluate on the other set
         Acc, overhead = blackBoxModel.evaluate(cluster[i][0], cluster[i][1] \
                                                      , targets, printRes = printRes)
         
-        # Add measurements to vector
+        # Add measurements to array
         accuracy[i].append(Acc[0])
         relPerf[i].append(Acc[1])
         overheads[i].append(overhead)
         
+        # this will evaluate with other models 
         if otherModels:
             ## Other models ##
-            ## Random Guesss
+            ## Random Guessing
             acc, MSOP = blackBoxModel.score(np.random.randint(np.min(targets),\
                         np.max(targets), cluster[i][1].shape[0]), cluster[i][1],\
                         targets, printRes = printRes)

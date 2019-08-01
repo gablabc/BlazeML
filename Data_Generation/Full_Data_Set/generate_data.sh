@@ -1,12 +1,13 @@
 #!/bin/bash
 blazemark_dir="/home/glaberge/opt/master/blazemark"
 
-benchmarks=('dmatdmatmult')
-#benchmarks=('dvecdvecadd' 'dmatdvecmult' 'dmatdmatadd' 'dmatscalarmult' 'dmattdmatadd' 'dmatdmatmult')
+# list of benchmark to run in the data set
+#benchmarks=('dmatdmatmult')
+benchmarks=('dvecdvecadd' 'dmatdvecmult' 'dmatdmatadd' 'dmatscalarmult' 'dmattdmatadd' 'dmatdmatmult')
 
-bs_vec_tab=('1')
-bs_row_tab=('256')
-bs_col_tab=('256')
+bs_vec_tab=('4096' '16' '1' '1' '1' '1')
+bs_row_tab=('1' '1' '4' '4' '64' '64')
+bs_col_tab=('1' '1' '1024' '1024' '64' '64')
 
 threads=('2' '4' '6' '8' '10' '12' '14' '16')
 chunk_sizes=('1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '20')
@@ -45,5 +46,5 @@ do
     done
 done
 
-#./convertFile
-#rm temp_file.txt
+./FileConvert
+rm temp_file.txt

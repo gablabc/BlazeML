@@ -1,6 +1,0 @@
-digraph "" {
-	node [label="\N"];
-	a	 [label="X[0] < 2"];
-	a -> b	 [label=True];
-	a -> c	 [label=False];
-}

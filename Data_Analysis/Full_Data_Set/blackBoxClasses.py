@@ -34,6 +34,10 @@ class PreTrainingOptimisationModel(object):
         self.n_features = 0
         self.n_targets = 0
         
+        # Weighted MSOP
+        self.threshold = 0.2
+        self.alpha = 0
+        
         
     # see the hyperparameters of the underlying algorithm    
     def printHyperParams(self):
@@ -74,7 +78,7 @@ class PreTrainingOptimisationModel(object):
                     maxPerf = Mflops[i][j]
                     maxCs = cs
                 j += 1
-                # min is required so i dont index outside of targets
+                # min is required so I dont index outside of targets
                 cs = self.targets[min(j, self.n_targets - 1)]
                 
             self.bestCs[index] = np.append(self.bestCs[index], maxCs)
@@ -117,9 +121,7 @@ class PreTrainingOptimisationModel(object):
         accuracy = 100 * np.mean(self.bestCs[0] == predTrain)
         
         if self.weighted:
-            threshold = 0.2 ## threshold for experiments with noise
-            alpha = 0
-            weights = (self.relVar[0] > threshold).astype(int) * self.relVar[0] ** alpha
+            weights = (self.relVar[0] > self.threshold).astype(int) * self.relVar[0] ** self.alpha
             MSOP = 100 * np.sum(Mflops[list(range(Xdata.shape[0])), predTrain.astype(int) - 1] * \
                                        weights / self.bestPerf[0]) / np.sum(weights)
         else:
@@ -138,8 +140,9 @@ class PreTrainingOptimisationModel(object):
             
             return []
         else:
-            ## degin to count the overhead of prediction at runtime
+            ## begin to count the overhead of prediction at runtime
             beg = time.time()
+            
             ## Standardisation
             if self.standardized:
                 Xdata = self.standardize(Xdata)
@@ -147,20 +150,22 @@ class PreTrainingOptimisationModel(object):
             preds = np.round(self.alg.predict(Xdata))
             # ensure that cs < max(targets)
             preds[preds > self.targets[-1]] = self.targets[-1]
+            
+            ## end count
             end = time.time()
             return preds, (end - beg) * 10 ** 9
     
     
     
-    # Assumes that the optimization method has been called  via the evaluate function
+    # Assumes that the optimization method has been called via the evaluate function
+    # Score is usefull when doing hyperparameter search as the Black Box model doesn't 
+    # need to find the optimal chunk sizes every time.
     def score(self, predTest, Mflops, targets, printRes = True):
         n_experimentTest = predTest.shape[0]
         
         accuracy = 100 * np.mean(self.bestCs[1] == predTest)
         if self.weighted:
-            threshold = 0.2 ## threshold for experiments with noise
-            alpha = 0
-            weights = (self.relVar[1] > threshold).astype(int) * self.relVar[1] ** alpha
+            weights = (self.relVar[1] > self.threshold).astype(int) * self.relVar[1] ** self.alpha
             MSOP = 100 * np.sum(Mflops[list(range(Mflops.shape[0])), predTest.astype(int) - 1] * \
                                        weights / self.bestPerf[1]) / np.sum(weights)
         else:
@@ -174,7 +179,7 @@ class PreTrainingOptimisationModel(object):
     
     
     
-    
+    # This func
     def evaluate(self, Xdata, Mflops, targets, printRes = True):
         
         if (Xdata.shape[1] != self.n_features or Mflops.shape[1] != self.n_targets):
@@ -231,6 +236,10 @@ class PostTrainingOptimisationModel(object):
         self.n_features = 0
         self.n_targets = 0
         
+        # Weighted MSOP
+        self.threshold = 0.2
+        self.alpha = 0
+        
         
     # see the hyperparameters of the underlying algorithm    
     def printHyperParams(self):
@@ -276,7 +285,8 @@ class PostTrainingOptimisationModel(object):
             
         print("Optimization Done !!!")
         
-        
+    # This functions does the feature augmentation procedure where chunk-size
+    # is now considered a feature of the Performance Model
     def augmente(self, Xdata):
         chunk_size = [self.targets[0]] * Xdata.shape[0]
         XdataAug = np.column_stack((Xdata, chunk_size))
@@ -317,6 +327,7 @@ class PostTrainingOptimisationModel(object):
       
         ## Training Phase
         realPerfs = np.ravel(Mflops, order='F')
+        # fit the log of performance to ensure that no example dominates others
         self.alg.fit(XdataAug, np.log(realPerfs))
         
         ## Get Predictions on Training Set
@@ -330,9 +341,7 @@ class PostTrainingOptimisationModel(object):
         ## Asses performance
         accuracy = 100 * (1 - np.mean(np.abs(predPerfs - realPerfs) / realPerfs))
         if self.weighted:
-            threshold = 0.2 ## threshold for experiments with noise
-            alpha = 0
-            weights = (self.relVar[0] > threshold).astype(int) * self.relVar[0] ** alpha
+            weights = (self.relVar[0] > self.threshold).astype(int) * self.relVar[0] ** self.alpha
             MSOP = 100 * np.sum(Mflops[list(range(Xdata.shape[0])), predCs.astype(int) - 1] * \
                                        weights / self.bestPerf[0]) / np.sum(weights)
         else:
@@ -344,6 +353,8 @@ class PostTrainingOptimisationModel(object):
         
         return accuracy, MSOP
     
+    
+    # This function simply returns the predictions of the model on a new example
     def predict(self, Xdata):        
         if (Xdata.shape[1] != self.n_features):
             print("This Data is not compatible with the Training Data")
@@ -355,6 +366,7 @@ class PostTrainingOptimisationModel(object):
             
             ## Measure Prediction OverHead
             beg = time.time()
+            
             ### Augmente the data set
             XdataAug = self.augmente(Xdata)
             ## Standardisation
@@ -368,23 +380,22 @@ class PostTrainingOptimisationModel(object):
                                                 self.n_targets), order = 'F'), axis = 1)]
             ## ensure that cs <= Nite
             predCs[predCs >= self.Nite[1]] = self.Nite[1][predCs >= self.Nite[1]]
+            
+            # End measuring time
             end = time.time()
             return predPerfs, predCs, (end - beg) * 10 ** 9
      
         
-    # Assumes that the optimization method has been called  via the evaluate function
+    # Assumes that the optimization method has been called via the evaluate function
     # and that RelVar were computed
     # Here predPerfs is augmented and predCs is not augmented
     def score(self, predPerfs, predCs, Mflops, targets, printRes = True):
-        
         realPerfs = np.ravel(Mflops, order='F')
         
         ## Asses performance
         accuracy = 100 * (1 - np.mean(np.abs(predPerfs - realPerfs) / realPerfs))
         if self.weighted:
-            threshold = 0.2 ## threshold for experiments with noise
-            alpha = 0
-            weights = (self.relVar[1] > threshold).astype(int) * self.relVar[1] ** alpha
+            weights = (self.relVar[1] > self.threshold).astype(int) * self.relVar[1] ** self.alpha
             MSOP = 100 * np.sum(Mflops[list(range(Mflops.shape[0])), predCs.astype(int) - 1] * \
                                        weights / self.bestPerf[1]) / np.sum(weights)
         else:
@@ -397,7 +408,8 @@ class PostTrainingOptimisationModel(object):
         return accuracy, MSOP    
     
     
-    
+    # This function will compute relVariances and optimal chunk size on all examples in
+    # The given set
     def evaluate(self, Xdata, Mflops, targets, printRes = True):
         
         if (Xdata.shape[1] != self.n_features or Mflops.shape[1] != self.n_targets):

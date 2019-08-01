@@ -34,9 +34,13 @@ class Node(object):
 class CustomDecisionTree(object):
     
     def __init__(self, max_depth, min_samples, max_MSOP, weighted = False):
-        self.max_depth = max_depth
-        self.min_samples = min_samples
-        self.max_MSOP = max_MSOP
+        
+        # hyperparameters
+        self.max_depth = max_depth       # Maximum depth of the tree
+        self.min_samples = min_samples   # Minimum number of samples in a leaf
+        self.max_MSOP = max_MSOP         # Maximal MSOP to make a split
+        
+        # If using weighted MSOP
         self.weighted = weighted
         
         self.root = 0
@@ -58,6 +62,10 @@ class CustomDecisionTree(object):
         # index 1 Test
         self.bestCs = [0, 0]         # Store best Chunk Size for Train and Test
         self.bestPerf = [0, 0]       # Store best Perf for Train and Test
+        
+        #Weighted MSOP
+        self.threshold = 0.2
+        self.alpha = 0
         
     
     # Print the hyperparameters of the tree   
@@ -110,7 +118,7 @@ class CustomDecisionTree(object):
     
     
     # Spliting the data set by finding the optimal split
-    # !!! Currently the function returns by copy which will have to be improved !!!
+    # !!! Currently the function returns by copy which is sub-optimal !!!
     def getSplit(self, Data):
         
         # setting up variables
@@ -136,7 +144,7 @@ class CustomDecisionTree(object):
                 else:
                     MSOP = 1 / N * (MSOPleft + MSOPright)
                 
-                # Check is MSOP is improved and if there is a split
+                # Check is MSOP is improved and if the split splits data or not
                 if MSOP > bestMSOP and DataLeft.size != 0 and DataRight.size != 0:
                     #Update variables
                     bestIndex, bestValue, bestMSOP = index, val, MSOP
@@ -210,7 +218,8 @@ class CustomDecisionTree(object):
                 else:
                     self.TrainMSOP += bestMSOPright * bestGroupRight.shape[0]
                 return
-                
+            
+            # There was no split actually    
             elif bestGroupLeft.size != 0 and bestGroupRight.size == 0:
                 self.makeLeaf(node)
                 node.label = self.nNode
@@ -220,6 +229,7 @@ class CustomDecisionTree(object):
                 else:
                     self.TrainMSOP += bestMSOPleft * bestGroupLeft.shape[0]
                 return
+            
             # There was a Split   
             else:
                 node.Data = []
@@ -261,12 +271,10 @@ class CustomDecisionTree(object):
         ## Compute Relative Variances of experiments
         relVar = np.array([])
         if self.weighted:
-            threshold = 0.2         ## threshold for experiments with noise
-            alpha = 0
             for i in range(Mflops.shape[0]):
                 perfs = Mflops[i, :int(min(Xdata[i, 3], Mflops.shape[1]))]
                 relVar = np.append(relVar, (np.var(perfs) / np.mean(perfs) ) )
-                weights = relVar ** alpha * (relVar >= threshold).astype(int)
+                weights = relVar **self.alpha * (relVar >= self.threshold).astype(int)
                 
         else:
             weights = np.ones((Xdata.shape[0], 1))
@@ -308,18 +316,13 @@ class CustomDecisionTree(object):
     def printTreeHeader(self, node, filename):
         FILE = open(filename, "w")
         FILE.write("#ifndef TREE_HEADER \n#define TREE_HEADER \n")
-        FILE.write("#include <vector>\n\n")     
-        FILE.write("inline int decisionTree(const std::vector<double>& featureVector) { \n")
+        FILE.write("#include <vector>\n\n")    
+        FILE.write("template <typename T> \n")
+        FILE.write("inline int decisionTree(const std::vector<T>& featureVector) { \n")
         self.printTreeHeaderRecurssive(node, FILE)
         FILE.write("}\n#endif")
         
-                   
-            
-    
-
         
-    
-     
     
     # Train the tree using Training Set    
     def train(self, Xdata, Mflops, targets, printRes = True):
@@ -367,9 +370,7 @@ class CustomDecisionTree(object):
         Acc = 100 * np.mean(preds == self.bestCs[1])
         
         if self.weighted:
-            threshold = 0.2 ## threshold for experiments with noise
-            alpha = 0
-            weights = (self.relVar[1] > threshold).astype(int) * self.relVar[1] ** alpha
+            weights = (self.relVar[1] > self.threshold).astype(int) * self.relVar[1] ** self.alpha
             MSOP = 100 * np.sum(Mflops[list(range(Mflops.shape[0])), preds.astype(int) - 1] * \
                                        weights / self.bestPerf[1]) / np.sum(weights)
             
