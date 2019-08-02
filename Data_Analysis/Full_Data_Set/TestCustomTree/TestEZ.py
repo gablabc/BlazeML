@@ -8,9 +8,6 @@ Created on Wed Jul  3 13:33:16 2019
 
 import CustomTree as ct
 import numpy as np
-import matplotlib.pyplot as plt
-import pygraphviz as pgv
-from math import trunc
 
 ### Test Data
 Xdata = np.array([[ 0.5 , 0.25, 1, 100],
@@ -43,6 +40,6 @@ tree = ct.CustomDecisionTree(10, 2, 0.90, weighted = True)
 tree.n_targets = 2
 tree.n_features = 4
 tree.train(Xdata, Mflops, targets)
-tree.printTreeHeader(tree.root, "EZTree.h")
-tree.printTree(tree.root)
+#tree.printTreeHeader(tree.root, "EZTree.h")
+#tree.printTree(tree.root)
 #tree.evaluate(Xdata, Mflops, targets, printRes = True)

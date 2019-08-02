@@ -64,4 +64,8 @@ where the hyperparameters are
 The advantage of the Cumstom Decision Tree is that is results in less complex models because the model is able to put more efforts in regions of the input space where chunk-size had a bigger impact on performance. Next figures illustrate that fact:
 
 
-(Show figures of classification and custom to see that our tree can focus on the right examples.)
+<img src="./TestCustomTree/TestCustomTree.png">
+
+<img src="./TestPreTrainingOptimizationModel/TestPreTO.png">
+
+Each point represents an experiement in the training set. The size of the circles are propotionnal to the relative variance of performance with respect to chunk-size for every experiement. In other words, the largest the circle, the more important it is to predict it correctly. For small circles, it doesn't really matter what chunk-size is predicted. We see that the custom decision tree results in a less complex tree because it is able to focus on experiements where the prediction of chunk-size matters more. Traditionnal classification trees will try to accuratelly predict every chunk-size regardless of the importance of predicting the rigth one.
