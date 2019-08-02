@@ -13,6 +13,12 @@ from matplotlib import cm as cm
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neural_network import MLPRegressor
 
+## Latex Font ##
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+
+
 ############### importing training data #################
         
 ### Reading data file ###

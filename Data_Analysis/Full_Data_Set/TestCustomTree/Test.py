@@ -15,6 +15,12 @@ import CustomTree as ct
 import pygraphviz as pgv
 from math import trunc
 
+## Latex Font ##
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+
+## print dot files
 def dotTreeRecursive(node, Graph):
     if node.terminal:
         Graph.add_node(node.label, label = "pred : " + str(node.pred) + "\nMSOP : " + str(trunc(node.MSOP * 100) / 100) + " (%)")
@@ -108,11 +114,13 @@ tree.evaluate(Xdataben, Mflopsben, targets)
 tree.score(np.ones((Mflopsben.shape[0])), Mflopsben, targets)
 #dotTree(tree.root)
 #tree.score(np.ones((Mflopsben.shape[0])), Mflopsben, targets)
-tree.printTree(tree.root)
-tree.printTreeHeader(tree.root, "basicTree.h")
+#tree.printTree(tree.root)
+#tree.printTreeHeader(tree.root, "basicTree.h")
 
 #%%
-plt.figure(5)
+fig = plt.figure(5)
+
+# compute meshgrid for plot
 x_min, x_max = np.min(Xdataben[:, 0]), np.max(Xdataben[:, 0])
 y_min, y_max = np.min(Xdataben[:, 1]), np.max(Xdataben[:, 1])
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 100),
@@ -131,7 +139,10 @@ plt.scatter(Xdataben[:, 0], Xdataben[:, 1] , c = YdataBen, cmap=cm.get_cmap('jet
                                                              s = 200 * sizes, edgecolor = 'k')
 plt.clim(1, 10)
 plt.colorbar()
+plt.xlabel("Nthr")
+plt.ylabel("Vector Size")
+plt.title("Predicted chunk size by Custom Decision Tree")
+plt.yscale("log")
+plt.text(0.75, 0.9, "chunk-size", transform = fig.transFigure)
 
-#%%
-tree.predict(np.array([[10, 500000]]))
 

@@ -10,8 +10,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm as cm
 from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
+
+## Latex Font ##
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
 
 ############### importing training data #################
         
@@ -89,7 +94,6 @@ lrc = LogisticRegression(solver = 'liblinear', multi_class='ovr')
 model = bb.PreTrainingOptimisationModel(lrc, standardized = True, weighted = True)
 model.train(Xdataben, Mflopsben, targets)
 preds, overhead = model.predict(Xdataben)
-print(overhead)
 model.evaluate(Xdataben, Mflopsben, targets)
 
 
@@ -99,7 +103,6 @@ mlp = MLPClassifier(solver = 'lbfgs', hidden_layer_sizes = (20, 20, 20))
 model = bb.PreTrainingOptimisationModel(mlp, standardized = True, weighted = True)
 model.train(Xdataben, Mflopsben, targets)
 preds, overhead = model.predict(Xdataben)
-print(overhead)
 model.evaluate(Xdataben, Mflopsben, targets)
 
 #%%
@@ -108,13 +111,12 @@ dtc = DecisionTreeClassifier(max_depth = 8)
 model = bb.PreTrainingOptimisationModel(dtc, standardized = False, weighted = True)
 model.train(Xdataben, Mflopsben, targets)
 preds, overhead = model.predict(Xdataben)
-print(overhead)
 model.evaluate(Xdataben, Mflopsben, targets)
 ####
 model.score(np.ones((Mflopsben.shape[0])), Mflopsben, targets)
 
 #%%
-plt.figure(1)
+fig = plt.figure(1)
 xx, yy = np.meshgrid(np.linspace(np.min(Xdataben[:, 0]), np.max(Xdataben[:, 0]), 500),
                      np.linspace(np.min(Xdataben[:, 1]), np.max(Xdataben[:, 1]), 500))
 
@@ -132,5 +134,10 @@ plt.scatter(Xdataben[:, 0], Xdataben[:, 1] , c = YdataBen, cmap=cm.get_cmap('jet
                                                              s = 200 * sizes, edgecolor = 'k')
 plt.clim(1, 10)
 plt.colorbar()
+plt.xlabel("Nthr")
+plt.ylabel("Vector Size")
+plt.title("Predicted chunk size by Traditionnal Decision Tree")
+plt.yscale("log")
+plt.text(0.75, 0.9, "chunk-size", transform = fig.transFigure)
 
 
