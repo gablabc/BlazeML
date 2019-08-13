@@ -53,5 +53,5 @@ Nthr Ms Mflop Nite Brow Bcol t1 t2 d1 d2 1 2 3 4 5 6 7 8 9 10 20
 4 500 499500 32 16 1 0 0 2 1 7867.89 10231.8 11677 12658.5 12209.7 11495.7 10908.4 10044.8 10320.2 10738.9 8767.06 
 
 ```
-The first 3 numbers in the first line are the number of experiemnts, number of features and number of targets. Performance is measured for each experiement and all chunk-sizes.
+The first 3 numbers in the first line are the number of experiments, number of features and number of targets. Performance is measured for each experiment and all chunk-sizes.
 Columns d1 and d2 represent the dimension of the arrays and t1, t2 represent the transpose flags of the arrays. These features are usefull to understand which row correspond to which benchmark. The model will only consider the 4 first features when doing predictions.

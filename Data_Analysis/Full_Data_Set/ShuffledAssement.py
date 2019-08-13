@@ -88,15 +88,12 @@ preBlackBoxlrc = bb.PreTrainingOptimisationModel(lrc, standardized = True, weigh
 
 
 
-
 ## Post Training Optimisation Model
 dtr2 = DecisionTreeRegressor(max_depth = 20, min_samples_leaf = 4)
 postBlackBoxdtr = bb.PostTrainingOptimisationModel(dtr2, standardized = False, weighted = True)
 
 mlp2 = MLPRegressor(hidden_layer_sizes = (100, 100, 100))
 postBlackBoxmlp = bb.PostTrainingOptimisationModel(mlp2, standardized = True, weighted = True)
-
-
 
 #%%
 # Hyper-parameter search for Custom Tree
@@ -146,7 +143,6 @@ print(str(np.mean(overheads)))
 
 #%%
 
-
 # Train Selected model on Training Set and Test on Test Set
 #blackBoxdtr.setHyperParams({"max_depth" : 6})
 customBlackBoxcdt.train(XTrain, MflopsTrain, targets)
@@ -177,6 +173,8 @@ def dotTree(node):
 #dotTree(customBlackBoxcdt.root)
 
 #%%
+    
+# generate the header file of the fitted decision tree
 customBlackBoxcdt.train(Xdata, Mflops, targets)
 customBlackBoxcdt.evaluate(Xdata, Mflops, targets)
 customBlackBoxcdt.printTree(customBlackBoxcdt.root)

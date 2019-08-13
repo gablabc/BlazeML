@@ -19,11 +19,13 @@ rc('text', usetex=True)
 #%%
 ############### importing training data #################
         
-benchmark = 'dmatdmatmult'
-ms = 2500
+benchmark = 'dvecdvecadd'
+ms = 1000000
+threads = [4, 8, 12, 16]
+styles = ['k-', 'k--', 'k:', 'k-.']
 
 ### Reading data file ###
-filename =  "data_chunk/marvinCS" + str(benchmark) + str(ms) + ".dat"
+filename =  "data_chunk/marvinCS" + str(benchmark) + str(ms) + "_2.dat"
 
 Xdata = []
 Mflops = []
@@ -42,15 +44,17 @@ Mflops = np.array(Mflops)
 targets = targets.astype(int)
 
 plt.figure(1, figsize=(8, 6))
+legend = []
 
-for i in range(Xdata.shape[0]):
-    plt.plot(targets, Mflops[i, :])
+for i in range(len(threads)):
+    plt.plot(targets, Mflops[np.where(Xdata[:, 0] == threads[i])[0][0], :], styles[i])
+    legend.append("Nthr = " + str(threads[i]))
     
 plt.grid(True, which="both", ls = "-", alpha = 0.5)     
 plt.xscale('log')
 plt.xlabel('cs')
 plt.ylabel('Mflops')
-plt.legend(["Nthr = " + str(int(Xdata[i, 0])) for i in range(Xdata.shape[0])])
+plt.legend(legend)
 
 #%%
 
