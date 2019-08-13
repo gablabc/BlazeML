@@ -2,6 +2,13 @@
 
 This contains the bash scripts used to generate the data set that will be used to train the machine learning algorithm. It is assumed a this point that the user can provide the block-size for each benchmark.
 
+Before generating data the cpp file dataconvert.cpp must be compiled into an executable called FileConvert
+
+```
+clang++ dataconvert.cpp o- FileConvert
+```
+
+This executable is used to format the data into something that is more concise than the standard output of Blazemark.
 To generate a data set, the script generate_data.sh must be changed and run.
 
 
