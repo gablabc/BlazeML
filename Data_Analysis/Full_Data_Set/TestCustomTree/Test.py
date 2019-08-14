@@ -136,7 +136,7 @@ plt.clim(1, 10)
 
 sizes = np.mean((maxPerfBen.reshape(-1, 1) - Mflopsben) / maxPerfBen.reshape(-1, 1), axis = 1)
 plt.scatter(Xdataben[:, 0], Xdataben[:, 1] , c = YdataBen, cmap=cm.get_cmap('jet', 10),\
-                                                             s = 200 * sizes, edgecolor = 'k')
+                                                             s = 400 * sizes, edgecolor = 'k')
 plt.clim(1, 10)
 plt.colorbar()
 plt.xlabel("Nthr")

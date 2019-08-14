@@ -109,8 +109,8 @@ model.evaluate(Xdataben, Mflopsben, targets)
 dtr = DecisionTreeRegressor(max_depth = 12)
 model = bb.PostTrainingOptimisationModel(dtr, standardized = False, weighted = True)
 model.train(Xdataben, Mflopsben, targets)
-model.evaluate(Xdataben, Mflopsben, targets)
-model.score(np.zeros(640), np.ones(64), Mflopsben, targets)
+#model.evaluate(Xdataben, Mflopsben, targets)
+#model.score(np.zeros(640), np.ones(64), Mflopsben, targets)
 
 #%%
 plt.figure(5)

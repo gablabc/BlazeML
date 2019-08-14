@@ -33,7 +33,7 @@ def merge(cluster, index):
 
 # Compute the MSOP error and prediction time via cross validation
 def getCrossValidationError(blackBoxModel, Xdata, Mflops, targets, k,\
-                            otherModels = False, printRes = True):
+                            otherModels = False, printRes = True, stratification = []):
     
     accuracy = []
     relPerf = []
@@ -49,11 +49,12 @@ def getCrossValidationError(blackBoxModel, Xdata, Mflops, targets, k,\
         
         # Train on k-1 sets
         Xfold, Mfold = merge(cluster, i)
-        blackBoxModel.train(Xfold, Mfold, targets, printRes = printRes)
+        blackBoxModel.train(Xfold, Mfold, targets, printRes = printRes, \
+                                                stratification = stratification)
         
         # Evaluate on the other set
         Acc, overhead = blackBoxModel.evaluate(cluster[i][0], cluster[i][1] \
-                                                     , targets, printRes = printRes)
+                                                , targets, printRes = printRes)
         
         # Add measurements to array
         accuracy[i].append(Acc[0])

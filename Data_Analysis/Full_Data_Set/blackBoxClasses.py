@@ -86,7 +86,7 @@ class PreTrainingOptimisationModel(object):
             
     
     # Training function that calls optimization
-    def train(self, Xdata, Mflops, targets, printRes = True):
+    def train(self, Xdata, Mflops, targets, printRes = True, stratification = []):
         # Set constants
         self.n_targets = Mflops.shape[1]
         self.n_features = Xdata.shape[1]
@@ -110,7 +110,12 @@ class PreTrainingOptimisationModel(object):
             Xdata = self.standardize(Xdata)
       
         ## Training Phase
-        self.alg.fit(Xdata, self.bestCs[0])
+        
+        # doing weighted loss function or not
+        if stratification == []:
+            self.alg.fit(Xdata, self.bestCs[0])
+        else:
+            self.alg.fit(Xdata, self.bestCs[0], sample_weight = stratification)
         
         ## Output accuracies
         predTrain = np.round(self.alg.predict(Xdata))
@@ -298,7 +303,7 @@ class PostTrainingOptimisationModel(object):
 
           
     # Training function that calls optimization
-    def train(self, Xdata, Mflops, targets, printRes = True):
+    def train(self, Xdata, Mflops, targets, printRes = True,  stratification = []):
         # Set constants
         self.n_targets = Mflops.shape[1]
         self.n_features = Xdata.shape[1]

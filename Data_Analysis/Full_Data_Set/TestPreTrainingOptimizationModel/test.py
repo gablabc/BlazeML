@@ -107,9 +107,11 @@ model.evaluate(Xdataben, Mflopsben, targets)
 
 #%%
 #Decision Tree
+strat = np.mean((maxPerfBen.reshape(-1, 1) - Mflopsben) / maxPerfBen.reshape(-1, 1), axis = 1)
+
 dtc = DecisionTreeClassifier(max_depth = 8)
 model = bb.PreTrainingOptimisationModel(dtc, standardized = False, weighted = True)
-model.train(Xdataben, Mflopsben, targets)
+model.train(Xdataben, Mflopsben, targets, stratification = strat)
 preds, overhead = model.predict(Xdataben)
 model.evaluate(Xdataben, Mflopsben, targets)
 ####
