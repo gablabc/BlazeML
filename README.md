@@ -10,3 +10,6 @@ The repository is structured as follow:
 1. Benchmarks ( contains python scripts to plot performance graphs for different benchmarks. This allows to compare the old HPX backend and the Machine Learning backend)
 
 1. Models ( contains the header files that represent the fitted classification trees )
+
+
+[![DOI](https://zenodo.org/badge/197469579.svg)](https://zenodo.org/badge/latestdoi/197469579)
